@@ -1,4 +1,4 @@
-import CartItem from '../models/cartItem.model';
+import CartItem from '../models/cartItem.model.js';
 import userService from '../services/user.service.js'
 
 async function updateCartItem(userId, cartItemId, cartItemData) {

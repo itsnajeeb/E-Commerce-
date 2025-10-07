@@ -1,5 +1,5 @@
-import Address from "../models/address.model";
-import Order from "../models/order.model";
+import Address from "../models/address.model.js";
+import Order from "../models/order.model.js";
 
 async function createOrder(user, shippAddress) {
     let address;
