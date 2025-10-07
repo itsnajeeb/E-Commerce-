@@ -1,42 +1,48 @@
 import jwtProvider from "../config/jwtProvider.js";
 import User from "../models/user.model.js";
 import bcrypt from 'bcrypt'
+
+
 const createUser = async (userData) => {
     try {
-        const { firstName, lastName, email, password } = userData
+        const { firstName, lastName, email, password } = userData;
 
-        const existEmail = await User.find({ email });
-        if (existEmail) {
-            throw new Error("User already exist with email ", email)
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            throw new Error(`User already exists with email: ${email}`);
         }
 
-        const hashPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        const createUser = await create({
+        const newUser = await User.create({
             firstName,
             lastName,
             email,
-            password: hashPassword
-        })
-        console.log("User Created Successfllyu", createUser);
+            password: hashedPassword,
+        });
 
+        return newUser;
 
-        return createUser
     } catch (error) {
-        throw new Error("User Creation Failed ", error.message)
+        throw new Error(`User creation failed: ${error.message}`);
     }
-}
+};
 
 const findUserById = async (userId) => {
     try {
-        const user = await User.findUserById(userId).populate('address')
+        console.log("USER ID ", userId);
+        
+        const user = await User.findById(userId)
+        // .populate('address');
+
+
         if (!user) {
             console.log("User not found");
         }
         return user
     }
     catch (error) {
-        throw new Error("User Not Find ", error.message)
+        throw new Error(`User Not Find ${error.message}`)
     }
 }
 
@@ -49,12 +55,13 @@ const getUserByEmail = async (email) => {
         return user
     }
     catch (error) {
-        throw new Error("User Not Find ", error.message)
+        throw new Error(`User Not Found ${error.message}`,)
     }
 }
 
 const getUserProfileByToken = async (token) => {
     try {
+
         const userId = jwtProvider.getUserIdFromToken(token)
 
         const user = await findUserById(userId)

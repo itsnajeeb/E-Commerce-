@@ -28,7 +28,7 @@ const cartItemSchema = mongoose.model({
         required: true,
         default: 1
     },
-    discountPrice: {
+    discountedPrice: {
         type: Number,
         required: true
     },
@@ -41,6 +41,6 @@ const cartItemSchema = mongoose.model({
 
 });
 
-const cartItem = mongoose.model("cartItems", cartItemSchema)
+const CartItem = mongoose.model("cartItems", cartItemSchema)
 
-module.exports = cartItem
+export default CartItem

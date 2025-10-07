@@ -11,7 +11,7 @@ const cartSchema = mongoose.Schema({
         ref:"cartItems",
         required:true,
     },
-
+ 
     totalPrice : {
         type:Number,
         required:true,
@@ -22,7 +22,7 @@ const cartSchema = mongoose.Schema({
         required:true,
         default:0
     },
-    totalDiscountPrice : {
+    totalDiscountedPrice : {
         type:Number,
         required:true,
         default:0

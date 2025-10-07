@@ -1,9 +1,9 @@
 import userService from "../services/user.service.js";
 
-const getUserProfile = async () => {
+const getUserProfile = async (req, res) => {
     try {
         const jwt = req.headers.authorization?.split(" ")[1];
-
+        
         if (!jwt) {
             return res.status(404).json({
                 message: "User not found"
@@ -11,6 +11,8 @@ const getUserProfile = async () => {
         }
 
         const user = await userService.getUserProfileByToken(jwt)
+        console.log(user);
+        
 
         return res.status(200).json({ user })
 

@@ -27,4 +27,4 @@ const ratingSchema = mongoose.model({
 })
 
 const Rating = mongoose.model('ratings', ratingSchema)
-module.exports = Rating
+export default Rating

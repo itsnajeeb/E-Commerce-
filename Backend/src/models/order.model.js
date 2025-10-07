@@ -48,7 +48,7 @@ const orderSchema = mongoose.Schema({
         type:Number,
         required:true,
     },
-    discount:{
+    discounte:{
         type:Number,
         required:true,
     },
@@ -70,4 +70,4 @@ const orderSchema = mongoose.Schema({
 
 const Order = mongoose.model("orders", orderSchema);
 
-module.exports=Order;
+export default Order
