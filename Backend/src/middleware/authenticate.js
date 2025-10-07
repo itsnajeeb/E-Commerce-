@@ -1,5 +1,5 @@
-import jwtProvider from "../config/jwtProvider";
-import userService from "../services/user.service";
+import jwtProvider from "../config/jwtProvider.js";
+import userService from "../services/user.service.js";
 
 const authenticate = async (req, res, next) => {
     try {

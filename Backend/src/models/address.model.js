@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const AddressSchema = mongoose.Schema({
+const AddressSchema = new mongoose.Schema({
     firstName: {
         type: String,
         required: true,

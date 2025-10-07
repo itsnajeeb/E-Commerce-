@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const productSchema = mongoose.model({
+const productSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true
@@ -35,33 +35,33 @@ const productSchema = mongoose.model({
         quantity: { type: String }
     }],
 
-    imageUrl:{
-        type:String,
+    imageUrl: {
+        type: String,
     },
-    ratings:[
+    ratings: [
         {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'ratings'
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ratings'
         },
     ],
 
-    reviews:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'reviews'
+    reviews: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'reviews'
     }],
 
-    numRating:{
-        type:Number,
-        default:0
+    numRating: {
+        type: Number,
+        default: 0
     },
-    category:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"categories"
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "categories"
     },
 
-    createdAt:{
-        type:Date,
-        default:Date.now()
+    createdAt: {
+        type: Date,
+        default: Date.now()
     }
 
 

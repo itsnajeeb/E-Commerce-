@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const ratingSchema = mongoose.model({
+const ratingSchema = new mongoose.Schema({
     user:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'users',
