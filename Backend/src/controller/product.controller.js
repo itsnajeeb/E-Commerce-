@@ -31,9 +31,10 @@ const updateProduct = async (req, res) => {
 
 const findProductById = async (req, res) => {
     const productId = req.params.id;
+    
     try {
         const product = await productService.findProductById(productId)
-        return res.status(201).send(product)
+        return res.status(200).send(product)
     } catch (error) {
         throw new Error({ error: error.message })
     }
@@ -41,7 +42,7 @@ const findProductById = async (req, res) => {
 const getAllProducts = async (req, res) => {
     try {
         const products = await productService.getAllProducts(req.query)
-        return res.status(201).send(products)
+        return res.status(200).send(products)
     } catch (error) {
         throw new Error({ error: error.message })
     }

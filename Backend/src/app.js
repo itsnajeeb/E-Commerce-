@@ -19,7 +19,7 @@ app.use(cors());
 app.use('/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/product',productRoutes)
-app.use('/api/admin/product',adminProductRoutes)
+app.use('/api/admin/products',adminProductRoutes)
 app.use('/api/cart',cartRoutes)
 app.use('/api/cart_items',cartItemsRoutes)
 app.use('/api/orders',orderRoutes)

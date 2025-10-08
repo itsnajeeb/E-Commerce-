@@ -23,13 +23,12 @@ const orderItemSchems = new mongoose.Schema({
 
     discountedPrice : {
         type:Number,
-        required:true,
     },
 
     userId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"users"
-    },
+    }, 
     delliveryDate:{
         type:Date
     }
@@ -38,4 +37,4 @@ const orderItemSchems = new mongoose.Schema({
 
 const OrderItem = mongoose.model('orderItems', orderItemSchems);
 
-module.exports = OrderItem
+export default OrderItem

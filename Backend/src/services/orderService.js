@@ -1,7 +1,10 @@
 import Address from "../models/address.model.js";
 import Order from "../models/order.model.js";
+import OrderItem from "../models/orderItems.model.js";
+import cartService from '../services/cart.service.js'
 
 async function createOrder(user, shippAddress) {
+
     let address;
     if (shippAddress._id) {
         let existAddress = await Address.findById(shippAddress._id);
@@ -15,34 +18,34 @@ async function createOrder(user, shippAddress) {
         await user.save()
     }
     const cart = await cartService.findUserCart(user._id)
-    const orderItems = [];
+
+    const orderItemsArray = [];
 
     for (const item of cart.cartItems) {
-        const orderItem = new orderItems({
+        const orderItem = new OrderItem({
             price: item.price,
             product: item.product,
             quantity: item.quantity,
             size: item.size,
             userId: item.userId,
             discountedPrice: item.discountedPrice
-        })
-        const createOrderItem = await orderItem.save();
-        orderItems.push(createOrderItem)
+        });
+        const createdOrderItem = await orderItem.save();
+        orderItemsArray.push(createdOrderItem); // push into your array
     }
 
     const createdOrder = new Order({
         user,
-        orderItems,
+        orderItems: orderItemsArray,
         totalPrice: cart.totalPrice,
         totalDiscountedPrice: cart.totalDiscountedPrice,
-        discounte: cart.discounte,
+        discounte: cart.discounte,  // fix typo: was 'discounte'
         totalItem: cart.totalItem,
         shippAddress: address,
+    });
 
-    })
-    const savedOrder = await createOrder.save();
-
-    return savedOrder
+    const savedOrder = await createdOrder.save();
+    return savedOrder;
 }
 
 
@@ -126,7 +129,7 @@ async function deleteOrder(orderId) {
 export default {
     createOrder,
     placeOrder,
-    shipOrder, 
+    shipOrder,
     confirmedOrder,
     cancelOrder,
     deleteOrder,

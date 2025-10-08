@@ -1,71 +1,98 @@
-import Cart from '../models/cart.model.js'
-import CartItem from '../models/cartItem.model.js'
+import Cart from '../models/cart.model.js';
+import CartItem from '../models/cartItem.model.js';
 import Product from '../models/product.model.js';
 
-const createCart = async (user) => {
-    try {
-        const cart = new Cart({ user });
-        const createCart = await cart.save()
-        return createCart
-    } catch (error) {
-        throw new Error(error.message)
-    }
-
-}
+const createCart = async (userId) => {
+  try {
+    const cart = new Cart({ user: userId });
+    const createdCart = await cart.save();
+    return createdCart;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 
 const findUserCart = async (userId) => {
-    try {
-        let cart = await Cart.findOne({ user: user });
-        let CartItems = await CartItem.find({ cart: cart._id }).populate("product")
-        cart.CartItems = CartItems;
-        let totalPrice = 0;
-        let totalDiscountPrice = 0;
-        let totalItem = 0;
+  try {
+    
+    let cart = await Cart.findOne({ user: userId });
 
-        for (let cartItem of cart.cartItems) {
-            totalPrice += cartItem.price;
-            totalDiscountPrice += cartItem.discountedPrice;
-            totalItem = cartItem.quantity
-        }
+    if (!cart) return null; // optionally: createCart(userId)
 
-        cart.totalPrice = totalPrice
-        cart.totalItem = totalItem
-        cart.discount = totalDiscountPrice;
+    let cartItems = await CartItem.find({ cart: cart._id }).populate("product");
+    cart.cartItems = cartItems;
 
-        return cart
+    let totalPrice = 0;
+    let totalDiscountPrice = 0;
+    let totalItem = 0;
 
-    } catch (error) {
-        throw new Error(error.message)
+    for (let cartItem of cart.cartItems) {
+      totalPrice += cartItem.price * cartItem.quantity;
+      totalDiscountPrice += cartItem.discountedPrice * cartItem.quantity;
+      totalItem += cartItem.quantity;
     }
-}
 
-async function addCartItem(userId, req) {
-    try {
-        const cart = await Cart.findOne({ user: userId })
-        const product = Product.findById(req.productId)
-        const isPresent = await CartItem.findOne({ cart: cart._id, product: product._id, userId })
-        if (!isPresent) {
-            const cartItem = new CartItem({
-                product: product._id,
-                cart: cart._id,
-                quantity: 1,
-                userId,
-                price: product.price,
-                size: req.size,
-                discountPrice: product.discountedPrice
-            })
+    cart.totalPrice = totalPrice;
+    cart.totalItem = totalItem;
+    cart.discount = totalDiscountPrice;
 
-            const createdCartItem = await cartItem.save()
-            cart.cartItems.push(createdCartItem)
-            await cart.save()
-            return "Item added to cart"
-        }
-    } catch (error) {
-        throw new Error(error.message)
+    return cart;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const addCartItem = async (userId, req) => {
+  try {
+    // Find or create cart
+    
+    let cart = await Cart.findOne({ user: userId });
+    console.log("CART",cart);
+    
+    if (!cart) {
+      cart = await createCart(userId);
     }
-}
+
+    // Find product
+    const product = await Product.findById(req.productId);
+    if (!product) throw new Error("Product not found");
+
+    // Check if item already in cart
+    const isPresent = await CartItem.findOne({
+      cart: cart._id,
+      product: product._id,
+      userId,
+    });
+
+    if (!isPresent) {
+      const cartItem = new CartItem({
+        product: product._id,
+        cart: cart._id,
+        quantity: 1,
+        userId,
+        price: product.price,
+        size: req.size,
+        discountedPrice: product.discountedPrice, // fixed field name
+      });
+
+      const createdCartItem = await cartItem.save();
+
+      // Add to cart.cartItems if this field exists in schema
+      if (!cart.cartItems) cart.cartItems = [];
+      cart.cartItems.push(createdCartItem._id);
+      await cart.save();
+
+      return "Item added to cart";
+    } else {
+      return "Item already in cart";
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 export default {
-    createCart,
-    findUserCart,
-    addCartItem
-}
+  createCart,
+  findUserCart,
+  addCartItem,
+};

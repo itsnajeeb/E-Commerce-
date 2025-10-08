@@ -30,7 +30,6 @@ const createUser = async (userData) => {
 
 const findUserById = async (userId) => {
     try {
-        console.log("USER ID ", userId);
         
         const user = await User.findById(userId)
         // .populate('address');
