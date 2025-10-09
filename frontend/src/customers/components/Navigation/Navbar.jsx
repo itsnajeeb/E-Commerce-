@@ -23,6 +23,9 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Avatar, Button, Menu, MenuItem } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
 import AuthModel from '../../Auth/AuthModel'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUser, logout } from '../../../State/Auth/Action'
+
 
 
 export default function Navbar() {
@@ -32,8 +35,10 @@ export default function Navbar() {
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
-  const jwt = localStorage.getItem("jwt");
-
+  const { auth } = useSelector(store => store)
+  const dispatch = useDispatch()
+  const jwt = localStorage.getItem("jwt")
+  const location = useLocation()
 
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -60,10 +65,31 @@ export default function Navbar() {
     navigate(`/${category.id}/${section.id}/${item.id}`);
   };
 
+  useEffect(() => {
+    if (jwt) {
+      dispatch(getUser(jwt))
+    }
+  }, [jwt, auth.jwt])
+
+  console.log("AUTH ", auth.user?.user?.firstName);
+  console.log("AUTH ", auth.user?.firstName);
+
+  useEffect(() => {
+    if (auth.user) {
+      handleClose()
+    }
+    if (location.pathname === "/login" || location.pathname === "/register") {
+      navigate(-1)
+    }
+
+  }, [auth.user])
 
   const handleLogout = () => {
+    dispatch(logout())
     handleCloseUserMenu();
+
   };
+
 
 
   return (
@@ -316,7 +342,7 @@ export default function Navbar() {
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  {false ? (
+                  {auth.user?.user?.firstName ? (
                     <div>
                       <Avatar
                         className="text-white"
@@ -330,7 +356,7 @@ export default function Navbar() {
                           cursor: "pointer"
                         }}
                       >
-                        N
+                        {auth.user?.user?.firstName[0].toUpperCase()}
                       </Avatar>
                       <Menu
                         id="basic-menu"
@@ -414,7 +440,7 @@ export default function Navbar() {
       </header>
 
 
-      <AuthModel handleClose={handleClose} open={openAuthModal}/>
+      <AuthModel handleClose={handleClose} open={openAuthModal} />
     </div >
   )
 }
