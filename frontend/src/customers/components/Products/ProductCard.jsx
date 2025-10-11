@@ -1,29 +1,35 @@
 import React from 'react'
 import './ProductCard.css'
 import { useNavigate } from 'react-router-dom'
-const ProductCard = ({product}) => {
+const ProductCard = ({ product }) => {
+    // console.log("PRD DATA >", product);
     const navigate = useNavigate()
 
-  return (
-    <div onClick={()=>{navigate(`/product/:${5}`)}} className=' productCard w-[15rem] m-3 transition-all cursor-pointer p-1'>
-        <div className='h-[20rem] '>
-            <img  className="object-cover object-left-top w-full h-full" src={product.image} alt="" />
-        </div>
+    return (
+        <div onClick={() => { navigate(`/product/:${5}`) }} className=' productCard w-[15rem] m-3 transition-all cursor-pointer '>
+            <div className="relative h-80 w-full overflow-hidden rounded-t-xl border-t border-l border-r border-gray-200 bg-gray-100 shadow-sm">
+                <img
+                    src={product.imageUrl}
+                    alt={product.title || "Product image"}
+                    className="h-full w-full object-cover object-center transition-transform duration-500 ease-in-out hover:scale-105"
+                />
+            </div>
 
-        <div className="textPart py-5 px-3 bg-gray-50">
-            <div>
-                <p className='font-bold opacity-60'>{product.brand}</p>
-                <p className=''>{product.title}</p>
+
+            <div className="textPart py-5 px-3 ">
+                <div>
+                    <p className='font-bold opacity-60'>{product.brand}</p>
+                    <p className=''>{product.title}</p>
+                </div>
+                <div className='flex items-center space-x-2'>
+                    <p className='font-semibold'>{product.discountedPrice}</p>
+                    <p className='line-through opacity-50'>{product.price}</p>
+                    <p className='text-green-600 font-semibold'>{product.discountPersent}% off</p>
+                </div>
             </div>
-            <div className='flex items-center space-x-2'>
-                <p className='font-semibold'>{product.selling_price}</p>
-                <p className='line-through opacity-50'>{product.price}</p>
-                <p className='text-green-600 font-semibold'>{product.disscount}</p>
-            </div>
+
         </div>
-        
-    </div>
-  )
+    )
 }
 
 export default ProductCard

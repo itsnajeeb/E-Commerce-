@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     Dialog,
     DialogBackdrop,
@@ -24,7 +24,10 @@ import RadioGroup from '@mui/material/RadioGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Radio from '@mui/material/Radio'
 import FilterListAltIcon from '@mui/icons-material/FilterListAlt';
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { findProducts } from '../../../State/Product/Action'
+import Pagination from '@mui/material/Pagination'
 
 
 
@@ -36,11 +39,33 @@ export default function Product() {
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
     const navigate = useNavigate()
     const location = useLocation()
+    const param = useParams()
+    const dispatch = useDispatch()
+    const { product, loading, error } = useSelector(store => store);
+    const decodedQueryString = decodeURIComponent(location.search)
+    const searchParam = new URLSearchParams(decodedQueryString)
+    const colorValue = searchParam.get("color")
+    const sizeValue = searchParam.get("size")
+    const priceValue = searchParam.get("price")
+    const discount = searchParam.get("discount")
+    const sortValue = searchParam.get("sort")
+    const pageNumber = searchParam.get("page") || 1
+    const stock = searchParam.get("stock")
+    console.log("PRODUCTS > ", product);
+
+
+
+    const handlePaginationOnChange = (event, value) => {
+        const searchParams = new URLSearchParams(location.search);
+        searchParams.set("page", value)
+        const query = searchParams.toString()
+        navigate({ search: `?${query}` })
+    }
 
     const handleFilter = (value, sectionId) => {
-        
+
         const searchParams = new URLSearchParams(location.search);
-        
+
         let filterValue = searchParams.getAll(sectionId)
 
         if (filterValue.length > 0 && filterValue[0].split(",").includes(value)) {
@@ -56,18 +81,48 @@ export default function Product() {
             searchParams.set(sectionId, filterValue.join(","));
         }
         const query = searchParams.toString()
+        // console.log("QUERY > ", query);
         navigate({ search: `?${query}` })
-
     }
 
-    const handleRadioFilterChange= (e, sectionId)=>{
+    const handleRadioFilterChange = (e, sectionId) => {
         const searchParams = new URLSearchParams(location.search);
-
-
         searchParams.set(sectionId, e.target.value);
         const query = searchParams.toString();
-        navigate({search: `?${query}`})
+        navigate({ search: `?${query}` })
     }
+
+    useEffect(() => {
+        const [minPrice, maxPrice] =
+            priceValue && priceValue.includes("-")
+                ? priceValue.split("-").map(Number)
+                : [0, 10000]; // default price range
+
+        const data = {
+            category: param?.levelThree || "all",
+            color: colorValue ? colorValue.split(",") : [],
+            size: sizeValue ? sizeValue.split(",") : [],
+            minPrice,
+            maxPrice,
+            minDiscount: discount ? Number(discount) : 0,
+            sort: sortValue || "price_low",
+            pageNumber: pageNumber ? Number(pageNumber) - 1 : 0,
+            pageSize: 1,
+            stock: stock || "in",
+        };
+
+        dispatch(findProducts(data));
+    }, [
+        param.levelThree,
+        colorValue,
+        sizeValue,
+        priceValue,
+        discount,
+        sortValue,
+        pageNumber,
+        stock
+    ]);
+
 
     return (
         <div className="bg-white">
@@ -315,9 +370,9 @@ export default function Product() {
                                                         >
                                                             {section.options.map((option, optionIdx) => (
                                                                 <>
-                                                                    <FormControlLabel 
-                                                                    onChange={(e)=> handleRadioFilterChange(e, section.id)}
-                                                                    key={optionIdx} value={option.value} control={<Radio />} label={option.label} />
+                                                                    <FormControlLabel
+                                                                        onChange={(e) => handleRadioFilterChange(e, section.id)}
+                                                                        key={optionIdx} value={option.value} control={<Radio />} label={option.label} />
                                                                 </>
 
 
@@ -372,10 +427,19 @@ export default function Product() {
 
                             {/* Product grid */}
                             <div className="lg:col-span-3 w-full">
-                                <div className='flex flex-wrap justify-center bg-white py-5 '>
-                                    {kurtaPage1.map((item, idx) => <ProductCard product={item} key={idx} />)}
+                                <div className='flex flex-wrap  bg-white py-5 '>
+
+                                    {product?.products?.content?.map((item, idx) => <ProductCard product={item} key={idx} />)}
+                                    {/* {kurtaPage1.map((item, idx) => <ProductCard product={item} key={idx} />)} */}
                                 </div>
                             </div>
+                        </div>
+                    </section>
+
+                    <section className='w-full px-[3.6rem]'>
+                        <div className='px-4 py-5 flex justify-center '>
+                            <Pagination count={product.products?.totalPages} onChange={handlePaginationOnChange} color="secondary" />
+
                         </div>
                     </section>
                 </main>

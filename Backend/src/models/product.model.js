@@ -18,21 +18,23 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    discountPersent: {
+        type: Number
+    },
     quantity: {
         type: Number,
         required: true,
     },
 
     brand: {
-        type: String,
-        required: true
+        type: String
     },
     color: {
         type: String,
     },
     sizes: [{
         name: { type: String },
-        quantity: { type: String }
+        quantity: { type: Number }
     }],
 
     imageUrl: {

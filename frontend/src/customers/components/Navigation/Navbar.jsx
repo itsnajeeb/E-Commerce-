@@ -71,8 +71,6 @@ export default function Navbar() {
     }
   }, [jwt, auth.jwt])
 
-  console.log("AUTH ", auth.user?.user?.firstName);
-  console.log("AUTH ", auth.user?.firstName);
 
   useEffect(() => {
     if (auth.user) {

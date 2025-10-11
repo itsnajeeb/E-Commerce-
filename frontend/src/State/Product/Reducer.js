@@ -7,6 +7,9 @@ const initialState = {
     error: null
 }
 export const customerProductReducer = (state = initialState, action) => {
+    // console.log("STATE > ", state);
+    // console.log("ACTIONS >", action.payload);
+    
     switch (action.type) {
         case FIND_PRODUCTS_REQUEST:
         case FIND_PRODUCT_BY_ID_REQUEST:
