@@ -9,6 +9,7 @@ import LoginForm from './LoginForm';
 
 const AuthModel = ({ handleClose, open }) => {
     const location = useLocation()
+    
     const style = {
         position: 'absolute',
         top: '50%',
@@ -25,7 +26,7 @@ const AuthModel = ({ handleClose, open }) => {
             {/* <Button onClick={handleOpen}>Open modal</Button> */}
             <Modal
                 open={open}
-                onClose={handleClose}
+                // onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >

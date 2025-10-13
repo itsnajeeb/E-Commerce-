@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom'
 const ProductCard = ({ product }) => {
     // console.log("PRD DATA >", product);
     const navigate = useNavigate()
-
+    const handleNavigate = () => {
+        navigate(`/product/${product._id}`)
+    }
     return (
-        <div onClick={() => { navigate(`/product/:${5}`) }} className=' productCard w-[15rem] m-3 transition-all cursor-pointer '>
+        <div onClick={handleNavigate} className=' productCard w-[15rem] m-3 transition-all cursor-pointer '>
             <div className="relative h-80 w-full overflow-hidden rounded-t-xl border-t border-l border-r border-gray-200 bg-gray-100 shadow-sm">
                 <img
                     src={product.imageUrl}

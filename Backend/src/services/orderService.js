@@ -4,7 +4,6 @@ import OrderItem from "../models/orderItems.model.js";
 import cartService from '../services/cart.service.js'
 
 async function createOrder(user, shippAddress) {
-
     let address;
     if (shippAddress._id) {
         let existAddress = await Address.findById(shippAddress._id);
@@ -12,13 +11,14 @@ async function createOrder(user, shippAddress) {
     }
     else {
         address = new Address(shippAddress);
-        address.user = user
+        address.user = user;
+        await address.save()
 
         user.address.push(address);
+
         await user.save()
     }
     const cart = await cartService.findUserCart(user._id)
-
     const orderItemsArray = [];
 
     for (const item of cart.cartItems) {
@@ -39,9 +39,9 @@ async function createOrder(user, shippAddress) {
         orderItems: orderItemsArray,
         totalPrice: cart.totalPrice,
         totalDiscountedPrice: cart.totalDiscountedPrice,
-        discounte: cart.discounte,  // fix typo: was 'discounte'
+        discounte: cart.discounte,  
         totalItem: cart.totalItem,
-        shippAddress: address,
+        shippingAddress: address,
     });
 
     const savedOrder = await createdOrder.save();
@@ -93,11 +93,12 @@ async function cancelOrder(orderId) {
 }
 
 async function findOrderById(orderId) {
+
     const order = await Order.findById(orderId)
         .populate("user")
         .populate({ path: "orderItems", populate: { path: "product" } })
         .populate("shippingAddress")
-
+    
     return order
 
 }
@@ -135,5 +136,6 @@ export default {
     deleteOrder,
     deliverOrder,
     getAllOrders,
-    userOrderHistory
+    userOrderHistory,
+    findOrderById
 }

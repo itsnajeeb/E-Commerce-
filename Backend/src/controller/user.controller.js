@@ -6,15 +6,13 @@ const getUserProfile = async (req, res) => {
         
         if (!jwt) {
             return res.status(404).json({
-                message: "User not found"
+                message: "Token not found"
             })
         }
 
         const user = await userService.getUserProfileByToken(jwt)
-        console.log(user);
-        
 
-        return res.status(200).json({ user })
+        return res.status(200).send(user)
 
     } catch (error) {
         throw new Error(error.message)
@@ -24,7 +22,7 @@ const getUserProfile = async (req, res) => {
 const getAllUser = async (req, res) => {
     try {
         const user = await userService.getAllUser();
-        return res.status(200).json({ user })
+        return res.status(200).json(user)
     } catch (error) {
         throw new Error(error.message)
     }

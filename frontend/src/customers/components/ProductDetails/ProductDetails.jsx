@@ -6,7 +6,11 @@ import ProductReviewCard from './ProductReviewCard'
 import { Autocomplete, Box, CircularProgress, LinearProgress } from '@mui/material'
 import { kurtaPage1 } from '../../../data/mens_kurta'
 import HomeSectionCard from '../HomeSectionCard/HomeSectionCard'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { findProductsById } from '../../../State/Product/Action'
+import { addItemToCart } from '../../../State/Cart/Action.js'
 
 
 const product = {
@@ -63,15 +67,32 @@ const product = {
 }
 const reviews = { href: '#', average: 4, totalCount: 117 }
 
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ')
-}
 
 export default function ProductDetails() {
     const navigate = useNavigate()
-    const handleAddToCart=()=>{
+    const [selectedSize, setSelectedSize] = useState("")
+    const params = useParams()
+    const productId = params.productId
+    const dispatch = useDispatch()
+    const { products, loading, error } = useSelector(store => store)
+    // console.log("PRODUCT ", products.prodcut);
+
+
+    const handleAddToCart = () => {
+        const data = {productId:params.productId, size : selectedSize}
+        // console.log("DATA >",data);
+        dispatch(addItemToCart(data))
         navigate("/cart")
     }
+
+    useEffect(() => {
+        if(loading){
+            return <div>Loading</div>
+        } if(error){
+            return <div>Error</div>
+        }
+        dispatch(findProductsById(productId))
+    }, [productId])
     return (
         <div className="bg-white lg:px-20">
             <div className="pt-6">
@@ -110,8 +131,8 @@ export default function ProductDetails() {
                         <div className='overflow-hidden rounded-lg max-w-[30rem] max-h-[35rem]'>
                             <img
                                 className="row-span-2 aspect-3/4 size-full rounded-lg object-cover max-lg:hidden"
+                                src={products.prodcut?.imageUrl}
                                 alt={product.images[0].alt}
-                                src={product.images[0].src}
                             />
                         </div>
                         <div className='flex flex-wrap  space-x-5  justify-center'>
@@ -131,17 +152,17 @@ export default function ProductDetails() {
                     {/* Product info */}
                     <div className="lg:col-span-1 mx-auto max-w-2xl px-4 pb-16 sm:pb-6 lg:max-w-7xl lg:px-8 lg:pb-24">
                         <div className="lg:col-span-2 ">
-                            <h1 className="text-lg lg:text-xl font-semibold text-gray-900 ">Brand Name</h1>
-                            <h1 className='text-lg lg:text-xl text-gray-900 opacity-60 pt-1'>Product Name</h1>
+                            <h1 className="text-lg lg:text-xl font-semibold text-gray-900 ">{products.prodcut?.brand}</h1>
+                            <h1 className='text-lg lg:text-xl text-gray-900 opacity-60 pt-1'>{products.prodcut?.title}</h1>
                         </div>
 
                         {/* Options */}
                         <div className="mt-4 lg:row-span-3 lg:mt-0">
                             <h2 className="sr-only">Product information</h2>
                             <div className='flex space-x-5 items-center text-lg lg:text-xl text-gray-900 mt-4'>
-                                <p className='font-semibold '>₹199</p>
-                                <p className='opacity-50 line-through'>₹211 </p>
-                                <p className='text-green-600 font-semibold'>5% Off</p>
+                                <p className='font-semibold '>{products.prodcut?.discountedPrice}</p>
+                                <p className='opacity-50 line-through'>{products.prodcut?.price} </p>
+                                <p className='text-green-600 font-semibold'>{products.prodcut?.discountPersent}% Off</p>
 
                             </div>
                             {/* Reviews */}
@@ -176,10 +197,11 @@ export default function ProductDetails() {
                                                 >
                                                     <input
                                                         defaultValue={size.id}
-                                                        defaultChecked={size === product.sizes[2]}
+                                                        // defaultChecked={size === product.sizes[2]}
                                                         name="size"
                                                         type="radio"
                                                         disabled={!size.inStock}
+                                                        onClick={()=>setSelectedSize(size.name)}
                                                         className="absolute inset-0 appearance-none focus:outline-none disabled:cursor-not-allowed"
                                                     />
                                                     <span className="text-sm font-medium text-gray-900 uppercase group-has-checked:text-white">

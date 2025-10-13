@@ -6,6 +6,8 @@ const createCart = async (userId) => {
   try {
     const cart = new Cart({ user: userId });
     const createdCart = await cart.save();
+    // console.log("CREATED CART > ", createdCart);
+
     return createdCart;
   } catch (error) {
     throw new Error(error.message);
@@ -14,7 +16,7 @@ const createCart = async (userId) => {
 
 const findUserCart = async (userId) => {
   try {
-    
+
     let cart = await Cart.findOne({ user: userId });
 
     if (!cart) return null; // optionally: createCart(userId)
@@ -23,18 +25,19 @@ const findUserCart = async (userId) => {
     cart.cartItems = cartItems;
 
     let totalPrice = 0;
-    let totalDiscountPrice = 0;
+    let totalDiscountedPrice = 0;
     let totalItem = 0;
 
     for (let cartItem of cart.cartItems) {
-      totalPrice += cartItem.price * cartItem.quantity;
-      totalDiscountPrice += cartItem.discountedPrice * cartItem.quantity;
+      totalPrice += cartItem.price;
+      totalDiscountedPrice += cartItem.discountedPrice;
       totalItem += cartItem.quantity;
     }
 
     cart.totalPrice = totalPrice;
     cart.totalItem = totalItem;
-    cart.discount = totalDiscountPrice;
+    cart.discounte = totalPrice - totalDiscountedPrice;
+    // console.log("USER CART >", cart);
 
     return cart;
   } catch (error) {
@@ -45,10 +48,9 @@ const findUserCart = async (userId) => {
 const addCartItem = async (userId, req) => {
   try {
     // Find or create cart
-    
     let cart = await Cart.findOne({ user: userId });
-    console.log("CART",cart);
-    
+    // console.log("CART", cart);
+
     if (!cart) {
       cart = await createCart(userId);
     }
@@ -72,14 +74,19 @@ const addCartItem = async (userId, req) => {
         userId,
         price: product.price,
         size: req.size,
-        discountedPrice: product.discountedPrice, // fixed field name
+        discountedPrice: product.discountedPrice,
       });
 
       const createdCartItem = await cartItem.save();
 
       // Add to cart.cartItems if this field exists in schema
       if (!cart.cartItems) cart.cartItems = [];
-      cart.cartItems.push(createdCartItem._id);
+      // cart.cartItems.push(createdCartItem._id);
+      cart.cartItems.push(createdCartItem);
+      cart.totalItem += 1;
+      cart.totalPrice += product.price;
+      cart.totalDiscountedPrice += product.discountedPrice;
+      cart.discounte = cart.totalPrice - cart.totalDiscountedPrice;
       await cart.save();
 
       return "Item added to cart";

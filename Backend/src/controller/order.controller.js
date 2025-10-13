@@ -13,10 +13,13 @@ const createOrder = async (req, res) => {
 
 
 const findOrderById = async (req, res) => {
+    
     const user = await req.user;
     try {
         let createOrder = await orderService.findOrderById(req.params.id)
-        return res.status(201).send(createOrder)
+        // console.log("ORDODO >", createOrder);
+        
+        return res.status(200).send(createOrder)
     } catch (error) {
         return res.status(500).send({ error: error.message })
     }

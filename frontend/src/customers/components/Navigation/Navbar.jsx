@@ -32,7 +32,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate()
   // const { auth, cart } = useSelector((store) => store);
-  const [openAuthModal, setOpenAuthModal] = useState(false);
+  const [openAuthModal, setOpenAuthModal] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
   const { auth } = useSelector(store => store)

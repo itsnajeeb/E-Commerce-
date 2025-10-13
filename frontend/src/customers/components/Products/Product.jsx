@@ -41,7 +41,6 @@ export default function Product() {
     const location = useLocation()
     const param = useParams()
     const dispatch = useDispatch()
-    const { product, loading, error } = useSelector(store => store);
     const decodedQueryString = decodeURIComponent(location.search)
     const searchParam = new URLSearchParams(decodedQueryString)
     const colorValue = searchParam.get("color")
@@ -51,9 +50,9 @@ export default function Product() {
     const sortValue = searchParam.get("sort")
     const pageNumber = searchParam.get("page") || 1
     const stock = searchParam.get("stock")
-    console.log("PRODUCTS > ", product);
 
-
+    const { products, loading, error } = useSelector(store => store);
+    console.log("PRODUCTS > ", products);
 
     const handlePaginationOnChange = (event, value) => {
         const searchParams = new URLSearchParams(location.search);
@@ -107,7 +106,7 @@ export default function Product() {
             minDiscount: discount ? Number(discount) : 0,
             sort: sortValue || "price_low",
             pageNumber: pageNumber ? Number(pageNumber) - 1 : 0,
-            pageSize: 1,
+            pageSize: 5,
             stock: stock || "in",
         };
 
@@ -429,7 +428,7 @@ export default function Product() {
                             <div className="lg:col-span-3 w-full">
                                 <div className='flex flex-wrap  bg-white py-5 '>
 
-                                    {product?.products?.content?.map((item, idx) => <ProductCard product={item} key={idx} />)}
+                                    {products?.products?.content?.map((item, idx) => <ProductCard product={item} key={idx} />)}
                                     {/* {kurtaPage1.map((item, idx) => <ProductCard product={item} key={idx} />)} */}
                                 </div>
                             </div>
@@ -438,7 +437,7 @@ export default function Product() {
 
                     <section className='w-full px-[3.6rem]'>
                         <div className='px-4 py-5 flex justify-center '>
-                            <Pagination count={product.products?.totalPages} onChange={handlePaginationOnChange} color="secondary" />
+                            <Pagination count={products.product?.totalPages} onChange={handlePaginationOnChange} color="secondary" />
 
                         </div>
                     </section>

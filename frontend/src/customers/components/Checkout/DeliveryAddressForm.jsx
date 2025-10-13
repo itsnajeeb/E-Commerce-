@@ -1,10 +1,13 @@
 import { Box, Button, Grid, TextField } from "@mui/material";
 import React from "react";
 import AddressCard from "../AddressCard/AddressCard";
+import { useDispatch } from 'react-redux'
 import './style.css'
+import { createOrder } from "../../../State/Order/Action";
+import { useNavigate } from "react-router-dom";
 const DeliveryAddressForm = () => {
-
-
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
     const handleSubmit = (e) => {
         e.preventDefault()
         const data = new FormData(e.currentTarget)
@@ -14,11 +17,12 @@ const DeliveryAddressForm = () => {
             streetAddress: data.get('streetAddress'),
             city: data.get('city'),
             state: data.get('state'),
-            postal_code: data.get('postal_code'),
-            phone: data.get('phone'),
+            zipCode: data.get('zipCode'),
+            mobile: data.get('mobile'),
         }
-        console.log("Address ", address);
+        const orderData = {address, navigate}
 
+        dispatch(createOrder(orderData))
     }
 
     return (
@@ -61,11 +65,11 @@ const DeliveryAddressForm = () => {
                             </Grid>
 
                             <Grid item size={{ xs: 12, lg: 6 }}>
-                                <TextField fullWidth required label="Zip / Postal Code " name="postal_code" id="postal_code" autoComplete="give-name" />
+                                <TextField fullWidth required label="Zip / Postal Code " name="zipCode" id="zipCode" autoComplete="give-name" />
                             </Grid>
 
                             <Grid item size={{ xs: 12, lg: 6 }}>
-                                <TextField fullWidth required label="Phone No " name="phone" id="phone" autoComplete="give-name" />
+                                <TextField fullWidth required label="Phone No " name="mobile" id="mobile" autoComplete="give-name" />
                             </Grid>
 
                             <Grid item size={{ xs: 12, lg: 6 }}>

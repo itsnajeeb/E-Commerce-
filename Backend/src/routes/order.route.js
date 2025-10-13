@@ -5,6 +5,6 @@ const router  = express.Router()
 
 router.post("/", authenticate,orderController.createOrder)
 router.post("/user", authenticate,orderController.orderHistory)
-router.post("/:id", authenticate,orderController.findOrderById)
+router.get("/:id", authenticate,orderController.findOrderById)
 
 export default router
