@@ -38,6 +38,7 @@ export default function Navbar() {
   const { auth } = useSelector(store => store)
   const dispatch = useDispatch()
   const jwt = localStorage.getItem("jwt")
+
   const location = useLocation()
 
   const handleUserClick = (event) => {
@@ -70,7 +71,6 @@ export default function Navbar() {
       dispatch(getUser(jwt))
     }
   }, [jwt, auth.jwt])
-
 
   useEffect(() => {
     if (auth.user) {
@@ -340,7 +340,7 @@ export default function Navbar() {
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  {auth.user?.user?.firstName ? (
+                  {auth?.user ? (
                     <div>
                       <Avatar
                         className="text-white"
@@ -354,7 +354,7 @@ export default function Navbar() {
                           cursor: "pointer"
                         }}
                       >
-                        {auth.user?.user?.firstName[0].toUpperCase()}
+                        {auth.user?.firstName[0].toUpperCase()}
                       </Avatar>
                       <Menu
                         id="basic-menu"

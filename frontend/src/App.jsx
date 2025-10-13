@@ -1,3 +1,4 @@
+import {  Route, Routes } from 'react-router-dom'
 import './App.css'
 import Cart from './customers/components/Cart/Cart'
 import Checkout from './customers/components/Checkout/Checkout'
@@ -9,22 +10,15 @@ import ProductDetails from './customers/components/ProductDetails/ProductDetails
 import Product from './customers/components/Products/Product'
 import HomePage from './customers/Pages/HomePage/HomePage'
 import CustomerRouter from './Routers/CustomerRouter'
+import AdminRouter from './Routers/AdminRouter'
 
 function App() {
 
   return (
-    <div>
-      <CustomerRouter/>
-      <div>
-        {/* <HomePage /> */}
-        {/* <Product/> */}
-        {/* <ProductDetails/> */}
-        {/* <Cart/> */}
-        {/* <Checkout/> */}
-        {/* <Order/> */}
-        {/* <OrderDetails/> */}
-      </div>
-    </div>
+      <Routes>
+        <Route path='/*' element={<CustomerRouter />} />
+        <Route path='/admin/*' element={<AdminRouter />} />
+      </Routes>
   )
 }
 
